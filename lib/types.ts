@@ -11,6 +11,9 @@ export interface Application {
   salary?: string;
   location?: string;
   applicationLink?: string;
+  resumeVersion?: string;
+  followUpDate?: string;
+  needsFollowUp?: boolean;
 }
 
 export type ApplicationFormData = Omit<Application, 'id'>;

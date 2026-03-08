@@ -2,7 +2,7 @@
 
 import { Application } from '@/lib/types';
 import { Card } from '@/components/ui/card';
-import { CheckCircle2, Clock, XCircle, Send, Trophy } from 'lucide-react';
+import { CheckCircle2, XCircle, Send, Trophy, Briefcase, TrendingUp } from 'lucide-react';
 
 interface DashboardCardsProps {
   applications: Application[];
@@ -34,16 +34,16 @@ export const DashboardCards = ({ applications }: DashboardCardsProps) => {
     {
       label: 'Applied',
       value: stats.applied,
-      icon: Clock,
-      bgColor: 'bg-amber-50',
-      textColor: 'text-amber-600',
+      icon: Send,
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-600',
     },
     {
       label: 'Interviewing',
       value: stats.interviewing,
-      icon: CheckCircle2,
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
+      icon: Briefcase,
+      bgColor: 'bg-amber-50',
+      textColor: 'text-amber-600',
     },
     {
       label: 'Offers',
@@ -55,7 +55,7 @@ export const DashboardCards = ({ applications }: DashboardCardsProps) => {
     {
       label: 'Success Rate',
       value: `${successRate}%`,
-      icon: Trophy,
+      icon: TrendingUp,
       bgColor: 'bg-emerald-50',
       textColor: 'text-emerald-600',
     },
@@ -69,18 +69,25 @@ export const DashboardCards = ({ applications }: DashboardCardsProps) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.label} className={`p-6 ${card.bgColor} dark:bg-slate-800 dark:border-slate-700`}>
-            <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-lg ${card.bgColor} dark:bg-slate-700`}>
-                <Icon className={`h-6 w-6 ${card.textColor}`} />
+          <Card
+            key={card.label}
+            className={`p-4 sm:p-6 ${card.bgColor} dark:bg-slate-800 dark:border-slate-700 hover:shadow-md dark:hover:shadow-slate-900/50 transition-all duration-200 hover:-translate-y-0.5 cursor-default`}
+          >
+            <div className="flex flex-col items-start gap-3">
+              <div className={`p-2.5 rounded-lg ${card.bgColor} dark:bg-slate-700 ring-1 ring-offset-0 ${
+                card.textColor.replace('text-', 'ring-')
+              }`}>
+                <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${card.textColor}`} />
               </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{card.label}</p>
-                <p className={`text-2xl font-bold ${card.textColor}`}>
+              <div className="w-full">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  {card.label}
+                </p>
+                <p className={`text-xl sm:text-2xl font-bold ${card.textColor} mt-1`}>
                   {card.value}
                 </p>
               </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Briefcase } from 'lucide-react';
+import { Briefcase, User } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 
 interface HeaderProps {
@@ -63,6 +63,17 @@ export const Header = ({ totalApplications = 0 }: HeaderProps) => {
                 }`}
               >
                 Analytics
+              </Link>
+              <Link
+                href="/dashboard/profile"
+                className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center flex items-center justify-center gap-2 ${
+                  pathname === '/dashboard/profile'
+                    ? 'bg-blue-800 text-white'
+                    : 'text-blue-100 hover:bg-blue-700'
+                }`}
+              >
+                <User className="h-4 w-4" />
+                Profile
               </Link>
             </nav>
           )}

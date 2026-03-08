@@ -35,6 +35,9 @@ const formSchema = z.object({
   salary: z.string().optional(),
   location: z.string().optional(),
   applicationLink: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  resumeVersion: z.string().optional(),
+  followUpDate: z.string().optional(),
+  needsFollowUp: z.boolean().optional(),
 });
 
 interface ApplicationFormProps {
@@ -60,6 +63,9 @@ export const ApplicationForm = ({
       salary: '',
       location: '',
       applicationLink: '',
+      resumeVersion: '',
+      followUpDate: '',
+      needsFollowUp: false,
       ...defaultValues,
     },
   });
@@ -201,6 +207,36 @@ export const ApplicationForm = ({
                       placeholder="e.g., https://job-board.com/job/12345"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="resumeVersion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Resume Version (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., v1, v2-tech, senior-v3" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="followUpDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Follow-up Date (Optional)</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
