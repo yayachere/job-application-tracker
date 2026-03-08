@@ -10,6 +10,8 @@ import { createClient } from '@/lib/supabase/client';
 import { ArrowLeft, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
   const router = useRouter();
   const supabase = createClient();
