@@ -1,5 +1,6 @@
 'use client';
 
+import { useApplicationsDB } from '@/hooks/use-applications-db';
 import { useApplications } from '@/hooks/use-applications';
 import { Header } from '@/components/header';
 import { KanbanBoard } from '@/components/kanban-board';
@@ -7,16 +8,36 @@ import { AnalyticsCharts } from '@/components/analytics-charts';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 export default function AnalyticsPage() {
-  const {
-    applications,
-    isLoaded,
-    updateApplication,
-    deleteApplication,
-  } = useApplications();
 
-  if (!isLoaded) {
+  const localData = useApplications(); // For unauthenticated users (localStorage)
+  const dbData = useApplicationsDB(); // For authenticated users (database)
+
+  // State to track authentication status
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
+
+  // Check authentication on mount
+  const supabase = createClient();
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      setIsAuthenticated(!error && !!user); // true if authenticated, false otherwise
+    };
+    getUser();
+  }, [supabase]);
+
+  // Select data based on auth status (after loading)
+  const { applications, isLoaded, updateApplication, deleteApplication } =
+    isAuthenticated ? dbData : localData;
+
+  // Show loading while determining auth or while data is loading
+  if (isAuthenticated === null || !isLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
         <Header />
@@ -26,7 +47,6 @@ export default function AnalyticsPage() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
       <Header totalApplications={applications.length} />

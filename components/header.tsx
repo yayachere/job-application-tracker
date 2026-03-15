@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Briefcase, User } from 'lucide-react';
+import { Briefcase, User, LogIn } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 interface HeaderProps {
   totalApplications?: number;
@@ -11,6 +13,21 @@ interface HeaderProps {
 
 export const Header = ({ totalApplications = 0 }: HeaderProps) => {
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+    };
+    checkAuth();
+  }, []);
+
+  const profileHref = isAuthenticated ? '/dashboard/profile' : '/auth/login';
+  const profileLabel = isAuthenticated ? 'Profile' : 'Login';
+  const ProfileIcon = isAuthenticated ? User : LogIn;
+  const isProfileActive = isAuthenticated ? pathname === '/dashboard/profile' : pathname === '/auth/login';
 
   return (
     <header className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-900 dark:to-blue-950 text-white">
@@ -42,41 +59,43 @@ export const Header = ({ totalApplications = 0 }: HeaderProps) => {
           </div>
 
           {/* Navigation buttons */}
-          {totalApplications > 0 && (
-            <nav className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-              <Link
-                href="/"
-                className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center ${
-                  pathname === '/'
-                    ? 'bg-blue-800 text-white'
-                    : 'text-blue-100 hover:bg-blue-700'
-                }`}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/analytics"
-                className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center ${
-                  pathname === '/analytics'
-                    ? 'bg-blue-800 text-white'
-                    : 'text-blue-100 hover:bg-blue-700'
-                }`}
-              >
-                Analytics
-              </Link>
-              <Link
-                href="/dashboard/profile"
-                className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center flex items-center justify-center gap-2 ${
-                  pathname === '/dashboard/profile'
-                    ? 'bg-blue-800 text-white'
-                    : 'text-blue-100 hover:bg-blue-700'
-                }`}
-              >
-                <User className="h-4 w-4" />
-                Profile
-              </Link>
-            </nav>
-          )}
+          <nav className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            {totalApplications > 0 && (
+              <>
+                <Link
+                  href="/"
+                  className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center ${
+                    pathname === '/'
+                      ? 'bg-blue-800 text-white'
+                      : 'text-blue-100 hover:bg-blue-700'
+                  }`}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/analytics"
+                  className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center ${
+                    pathname === '/analytics'
+                      ? 'bg-blue-800 text-white'
+                      : 'text-blue-100 hover:bg-blue-700'
+                  }`}
+                >
+                  Analytics
+                </Link>
+              </>
+            )}
+            <Link
+              href={profileHref}
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base text-center flex items-center justify-center gap-2 ${
+                isProfileActive
+                  ? 'bg-blue-800 text-white'
+                  : 'text-blue-100 hover:bg-blue-700' 
+              }`}
+            >
+              <ProfileIcon className="h-4 w-4" />
+              {profileLabel}
+            </Link>
+          </nav>
         </div>
       </div>
     </header>

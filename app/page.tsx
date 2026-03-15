@@ -81,17 +81,6 @@ export default function Home() {
     setDateToFilter('');
   };
 
-  if (isChecking) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <p className="text-center text-gray-600 dark:text-gray-400">Checking authentication...</p>
-        </div>
-      </div>
-    );
-  }
-
   const handleAddApplication = (data: ApplicationFormData) => {
     addApplication(data);
     setShowForm(false);
