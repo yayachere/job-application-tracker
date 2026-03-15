@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/header';
 import { ApplicationForm } from '@/components/application-form';
 import { ApplicationList } from '@/components/application-list';
@@ -13,8 +14,28 @@ import { ApplicationFormData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { exportToCSV } from '@/lib/csv-export';
 import { Download } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 export default function Home() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [isChecking, setIsChecking] = useState(true);
+
+  // Check if user is logged in and redirect
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        router.push('/dashboard');
+      } else {
+        setIsChecking(false);
+      }
+    };
+    checkAuth();
+  }, [supabase, router]);
+
   const {
     applications,
     isLoaded,
@@ -59,6 +80,17 @@ export default function Home() {
     setDateFromFilter('');
     setDateToFilter('');
   };
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <p className="text-center text-gray-600 dark:text-gray-400">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddApplication = (data: ApplicationFormData) => {
     addApplication(data);
@@ -132,6 +164,13 @@ export default function Home() {
                 onReset={handleResetFilters}
               />
             </div>
+
+            <FilterBar
+              onStatusFilter={setStatusFilter}
+              onPlatformFilter={setPlatformFilter}
+              selectedStatus={statusFilter}
+              selectedPlatform={platformFilter}
+            />
           </>
         )}
 

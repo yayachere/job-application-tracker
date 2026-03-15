@@ -172,7 +172,7 @@ export default function ProfilePage() {
                 size="lg"
                 className="gap-2"
               >
-                <LogOut className="h-4 w-4" /> 
+                <LogOut className="h-4 w-4" />
                 Logout
               </Button>
             </div>

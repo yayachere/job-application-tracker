@@ -15,7 +15,13 @@ export const useApplicationsDB = () => {
     const getUser = async () => {
       const {
         data: { user },
+        error,
       } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Error getting user:', error.message);
+        setUserId(null);
+        return;
+      }
       setUserId(user?.id || null);
     };
     getUser();
@@ -30,10 +36,10 @@ export const useApplicationsDB = () => {
         .from('applications')
         .select('*')
         .eq('user_id', userId)
-        .order('dateApplied', { ascending: false });
+        .order('date_applied', { ascending: false });
 
       if (error) {
-        console.error('Error fetching applications:', error);
+        console.error('Error fetching applications:', error.message, error);
         setIsLoaded(true);
         return;
       }
@@ -85,7 +91,7 @@ export const useApplicationsDB = () => {
       ]);
 
       if (error) {
-        console.error('Error adding application:', error);
+        console.error('Error adding application:', error.message, error);
         return;
       }
 
@@ -94,7 +100,7 @@ export const useApplicationsDB = () => {
         .from('applications')
         .select('*')
         .eq('user_id', userId)
-        .order('dateApplied', { ascending: false });
+        .order('date_applied', { ascending: false });
 
       const apps = (refreshed || []).map((app: any) => ({
         id: app.id,
@@ -138,7 +144,7 @@ export const useApplicationsDB = () => {
         .eq('user_id', userId);
 
       if (error) {
-        console.error('Error updating application:', error);
+        console.error('Error updating application:', error.message, error);
         return;
       }
 
@@ -165,7 +171,7 @@ export const useApplicationsDB = () => {
         .eq('user_id', userId);
 
       if (error) {
-        console.error('Error deleting application:', error);
+        console.error('Error deleting application:', error.message, error);
         return;
       }
 
