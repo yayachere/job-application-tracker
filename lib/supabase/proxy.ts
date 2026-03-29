@@ -37,9 +37,21 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: If you remove getUser() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+    
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    
+    clearTimeout(timeout)
+    user = authUser
+  } catch (error) {
+    console.error('[Middleware] Failed to get user:', error)
+    // Continue without user data on error - don't block the request
+  }
 
   if (
     // if the user is not logged in and the app path, in this case, /protected, is accessed, redirect to the login page
